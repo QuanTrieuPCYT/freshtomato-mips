@@ -1,0 +1,27 @@
+name: Build and Upload FreshTomato-RTN-NVRAM32K-Micro
+on:
+  push:
+    branches: [ "micro" ]
+  workflow_dispatch:
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository and its submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: 'true'
+
+      - name: Install build dependencies
+        run: sudo apt install build-essential net-tools re2c texlive libelf1 nodejs zip mc cmake ninja-build curl libglib2.0-dev-bin sqlite3 dconf-editor python3-dev lib32stdc++6 libncurses-dev gawk zlib1g-dev autopoint shtool autogen mtd-utils gcc-multilib lib32z1-dev pkg-config libssl-dev automake1.11 libmnl-dev libxml2-dev intltool libglib2.0-dev libstdc++5 texinfo dos2unix xsltproc libnfnetlink0 libcurl4-openssl-dev libgtk2.0-dev libnotify-dev libevent-dev git re2c texlive libelf1 nodejs zip mc cmake ninja-build curl libglib2.0-dev-bin sqlite3 dconf-editor python3-dev --no-install-recommends -y
+
+      - name: Build firmware
+        run: patch -d release/src-rt/linux -R -p4 < release/src-rt/linux/fix4usbap.patch && make -C release/src-rt n MIPS32=r2 NVRAM_SIZE=32
+
+      - name: Upload artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: freshtomato-build
+          path: release/src-rt/image/*
