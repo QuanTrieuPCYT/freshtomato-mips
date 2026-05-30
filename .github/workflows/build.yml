@@ -10,7 +10,7 @@ jobs:
 
     steps:
       - name: Checkout repository and its submodules
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           submodules: 'true'
 
@@ -21,7 +21,7 @@ jobs:
         run: patch -d release/src-rt/linux -R -p4 < release/src-rt/linux/fix4usbap.patch && make -C release/src-rt r2n
 
       - name: Upload artifacts
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: freshtomato-build
           path: release/src-rt/image/*
